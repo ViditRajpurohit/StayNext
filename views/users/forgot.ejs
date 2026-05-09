@@ -1,0 +1,85 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+    body {
+        background: black !important;
+        margin: 0;
+        padding: 0;
+        overflow: hidden; 
+    }
+
+    nav, footer { 
+        display: none !important; 
+    }
+
+    .forgot-bg {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                          url('/images/bg-forgot-pass.jpg');
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Smaller, tighter glass card */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 2.2rem;
+        width: 85%; 
+        max-width: 320px; /* Reduced from 380px */
+        padding: 2rem 1.25rem; /* Reduced padding */
+    }
+</style>
+
+<div class="forgot-bg">
+    <div class="glass-card animate__animated animate__fadeIn">
+        
+        <div class="text-center mb-6">
+            <div class="flex justify-start mb-2">
+                <a href="/login" class="text-gray-400 hover:text-white transition">
+                    <i class="fa-solid fa-chevron-left text-sm"></i>
+                </a>
+            </div>
+
+            <!-- Smaller Icon -->
+            <div class="mb-3 inline-flex items-center justify-center w-12 h-12 bg-rose-500/20 rounded-xl">
+                <i class="fa-solid fa-shield-halved text-rose-500 text-lg"></i>
+            </div>
+            
+            <h2 class="text-xl font-bold text-white mb-1 tracking-tight">Account Recovery</h2>
+            <p class="text-gray-400 text-[10px] font-light leading-relaxed px-2">
+                Enter your email for a secure <br> 6-digit verification code.
+            </p>
+        </div>
+        
+        <form action="/send-otp" method="POST" class="space-y-4" novalidate id="forgotForm">
+            <div>
+                <label class="block text-[8px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Email Address</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-500">
+                        <i class="fa-regular fa-envelope text-xs"></i>
+                    </span>
+                    <input type="email" name="email" required placeholder="vidit@example.com"
+                           class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white text-xs placeholder:text-gray-600 focus:outline-none focus:border-rose-500/40 transition-all">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 rounded-xl shadow-lg active:scale-[0.97] transition-all text-xs">
+                Request OTP
+            </button>
+        </form>
+
+        <div class="mt-6 text-center">
+            <p class="text-gray-500 text-[9px]">
+                Remembered your password? 
+                <a href="/login" class="text-rose-400 font-bold ml-1">Login</a>
+            </p>
+        </div>
+    </div>
+</div>

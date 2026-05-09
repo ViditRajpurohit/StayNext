@@ -1,0 +1,121 @@
+<nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-20">
+      
+      <!-- 1. Logo & Brand -->
+      <div class="flex-shrink-0 flex items-center">
+        <a href="/listings" class="flex items-center text-rose-500 hover:opacity-90 transition-opacity">
+          <img src="/images/StayNext-logo.png" alt="Logo" class="w-10 h-10 object-contain">
+          <!-- Hidden on small mobile to make room for search -->
+          <span class="ml-2 text-xl font-bold tracking-tighter hidden sm:block">StayNext</span>
+        </a>
+      </div>
+
+      <!-- 2. Central Search Bar (Responsive & Route-Specific) -->
+      <div class="flex-1 flex justify-center px-4">
+        <% if (typeof currPath !== 'undefined' && (currPath === '/listings' || currPath === '/')) { %>
+          <form action="/listings/search" method="GET" class="flex items-center border border-gray-300 rounded-full py-1.5 px-3 shadow-sm hover:shadow-md transition-all w-full max-w-[160px] min-[450px]:max-w-[250px] sm:max-w-md bg-white">
+            <input 
+              type="text" 
+              id="searchInput" 
+            
+              placeholder="Search..." 
+              class="w-full bg-transparent border-none outline-none text-xs sm:text-sm text-gray-700 placeholder-gray-500 px-1 focus:ring-0"
+            >
+            <button type="submit" class="bg-rose-500 p-1.5 rounded-full text-white hover:bg-rose-600 transition-colors flex-shrink-0">
+              <svg class="w-3.5 h-3.5 sm:w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </button>
+          </form>
+        <% } %>
+      </div>
+
+      <!-- 3. User Menu & Dropdown -->
+      <div class="flex-shrink-0 flex items-center gap-2 sm:gap-4">
+        <!-- Host link hidden on tablets and mobile to save space -->
+        <a href="/listings/new-list" class="hidden lg:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-gray-100 transition-colors">
+          StayNext your home
+        </a>
+
+        <div class="relative" id="user-menu-button">
+          <button class="flex items-center gap-2 sm:gap-3 border border-gray-300 rounded-full p-1 sm:p-1.5 pl-2 sm:pl-3 hover:shadow-md transition-shadow bg-white">
+            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+            <div class="w-7 h-7 sm:w-8 h-8 rounded-full overflow-hidden border border-gray-100 bg-gray-200">
+              <% if (currUser && currUser.profilePhoto) { %>
+                <img src="<%= currUser.profilePhoto.url %>" class="w-full h-full object-cover" alt="Profile">
+              <% } else { %>
+                <img src="/images/default-profile-photo1.png" class="w-full h-full object-cover" alt="Default Profile">
+              <% } %>
+            </div>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <div id="user-dropdown" class="hidden absolute right-0 mt-3 w-52 sm:w-56 bg-white border border-gray-200 rounded-xl shadow-xl py-2 z-50">
+            <% if (!currUser) { %>
+              <a href="/signup" class="block px-4 py-2 text-sm font-bold text-gray-900 hover:bg-gray-50">Sign up</a>
+              <a href="/login" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">Log in</a>
+            <% } else { %>
+              <div class="px-4 py-2 border-b border-gray-50 mb-1">
+                <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Account</p>
+                <p class="text-sm font-semibold text-gray-900 truncate">@<%= currUser.name %></p>
+              </div>
+              <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Profile</a>
+              <a href="/listings/new-list" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Create Listing</a>
+              <hr class="my-2 border-gray-100">
+              <a href="/logout" class="block px-4 py-2 text-sm text-rose-600 font-medium hover:bg-rose-50">Log out</a>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<script>
+  const menuBtn = document.getElementById('user-menu-button');
+  const dropdown = document.getElementById('user-dropdown');
+
+  // Toggle dropdown on click
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle('hidden');
+  });
+
+  // Close dropdown when clicking anywhere else on the screen
+  document.addEventListener('click', (e) => {
+    if (!menuBtn.contains(e.target)) {
+      dropdown.classList.add('hidden');
+    }
+  });
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    
+    // Select all your listing cards (ensure your cards have the class 'listing-card')
+    const cards = document.querySelectorAll('.listing-card');
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+
+        cards.forEach(card => {
+          // Get text from title and location within the card
+          const title = card.querySelector('.card-title')?.innerText.toLowerCase() || "";
+          const location = card.querySelector('.card-location')?.innerText.toLowerCase() || "";
+
+          // Show card if query matches title OR location, otherwise hide it
+          if (title.includes(query) || location.includes(query)) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      });
+    }
+  });
+</script>

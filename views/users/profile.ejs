@@ -1,0 +1,56 @@
+<% layout("/layouts/boilerplate") %>
+
+<!-- Reduced margins for mobile, centered for desktop -->
+<div class="max-w-3xl mx-auto my-4 sm:my-10 px-4 sm:px-6">
+    <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 px-2 sm:px-0">Account Settings</h1>
+
+    <!-- Removed shadow on mobile to look cleaner, rounded-xl for better mobile feel -->
+    <div class="bg-white border-y sm:border border-gray-200 rounded-none sm:rounded-2xl p-6 sm:p-8 shadow-none sm:shadow-sm">
+        
+        <!-- Profile Photo Section: Stacked on mobile, row on tablet+ -->
+        <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mb-8 pb-8 border-b border-gray-100 text-center sm:text-left">
+            <div class="relative group">
+                <!-- Added responsive size: 5rem (20) on mobile, 6rem (24) on desktop -->
+                <img src="<%= currUser.profilePhoto.url %>" alt="Profile" 
+                     class="w-24 h-24 rounded-full object-cover aspect-square border-2 border-rose-500 shadow-sm flex-shrink-0">
+                
+                <!-- Larger tap target for mobile camera button -->
+                <label for="profileUpload" class="absolute bottom-0 right-0 bg-white border border-gray-300 p-2 sm:p-1.5 rounded-full cursor-pointer hover:bg-gray-50 shadow-md">
+                    <i class="fa-solid fa-camera text-gray-600 text-xs"></i>
+                </label>
+            </div>
+            
+            <div class="w-full">
+                <h2 class="text-xl font-semibold text-gray-900"><%= currUser.name %></h2>
+                <p class="text-gray-500 text-sm">Personal Info</p>
+                
+                <form action="/profile/update-photo?_method=PUT" method="POST" enctype="multipart/form-data" id="photoForm">
+                    <input type="file" id="profileUpload" name="profilePhoto" class="hidden" onchange="this.form.submit()">
+                </form>
+            </div>
+        </div>
+
+        <!-- Account Details -->
+        <div class="space-y-6">
+            <!-- Username Row -->
+            <div class="flex justify-between items-center border-b border-gray-50 pb-4">
+                <div class="overflow-hidden">
+                    <p class="text-xs sm:text-sm font-semibold text-gray-400 uppercase tracking-wider">Username</p>
+                    <p class="text-gray-800 font-medium truncate"><%= currUser.name %></p>
+                </div>
+            </div>
+
+            <!-- Email Row -->
+            <div class="flex justify-between items-center border-b border-gray-50 pb-4">
+                <div class="overflow-hidden pr-2">
+                    <p class="text-xs sm:text-sm font-semibold text-gray-400 uppercase tracking-wider">Email Address</p>
+                    <p class="text-gray-800 font-medium truncate text-sm sm:text-base"><%= currUser.email %></p>
+                </div>
+                <!-- Flex-shrink-0 prevents the button from being squished by long emails -->
+                <button class="flex-shrink-0 text-rose-500 text-xs sm:text-sm font-bold hover:underline italic bg-rose-50 px-2 py-1 rounded">
+                    Verified
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

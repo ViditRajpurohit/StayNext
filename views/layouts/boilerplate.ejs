@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StayNest</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Prevent scrolling when preloader is active */
+        body.loading {
+            overflow: hidden;
+        }
+    </style>
+    <link rel="stylesheet" href="/css/rating.css">
+</head>
+<body class="loading flex flex-col min-h-screen bg-white">
+
+    <!-- 1. Preloader Overlay -->
+    <div id="preloader" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white transition-opacity duration-1000">
+        <div class="relative">
+            <div class="h-16 w-16 rounded-full border-4 border-gray-100 border-t-rose-500 animate-spin"></div>
+        </div>
+        <p class="mt-4 text-rose-500 font-bold animate-pulse tracking-wide">StayNext is Loading...</p>
+    </div>
+
+    <!-- 2. Toast Notification Box -->
+    <div id="toast" class="fixed top-5 right-5 z-[10000] translate-x-[150%] transition-transform duration-500 ease-out">
+        <div class="bg-white border-l-4 border-rose-500 shadow-2xl rounded-md overflow-hidden w-80">
+            <div class="p-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-rose-100 p-1 rounded-full">
+                        <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-gray-900 font-bold text-sm">Success!</p>
+                        <p class="text-gray-600 text-xs">Action completed successfully.</p>
+                    </div>
+                </div>
+                <button onclick="hideToast()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <!-- The shrinking line -->
+            <div id="toast-progress" class="h-1 bg-rose-500 w-full"></div>
+        </div>
+    </div>
+
+    <!-- Include Navbar -->
+    <%- include("../includes/navbar.ejs") %>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        <%- body %>
+    </main>
+
+    <!-- Include Footer -->
+    <%- include("../includes/footer.ejs") %>
+
+    <script>
+        // --- Preloader Logic ---
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            const body = document.body;
+
+            preloader.classList.add('opacity-0');
+            body.classList.remove('loading');
+
+            setTimeout(() => {
+                preloader.style.display = 'none';
+            }, 1000);
+        });
+
+        // --- Toast Logic ---
+        function showToast() {
+    const toast = document.getElementById('toast');
+    const progress = document.getElementById('toast-progress');
+
+    // 1. Reset the bar to full immediately (no animation)
+    progress.style.transition = 'none';
+    progress.style.width = '100%';
+
+    // 2. Slide the toast in
+    toast.classList.remove('translate-x-[150%]');
+    
+    // 3. Use a tiny timeout to allow the "100%" width to register before animating
+    setTimeout(() => {
+        // Match the duration (3000ms) with your hide timeout
+        progress.style.transition = 'width 3000ms linear';
+        progress.style.width = '0%';
+    }, 10);
+
+    // 4. Hide the toast after 3000ms (plus a tiny 100ms buffer for smoothness)
+    setTimeout(() => {
+        hideToast();
+    }, 3100);
+}
+
+        function hideToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('translate-x-[150%]');
+            
+            // Reset progress bar width for next time
+            setTimeout(() => {
+                document.getElementById('toast-progress').style.width = '100%';
+            }, 500);
+        }
+
+        window.addEventListener('load', () => {
+        // Use EJS to check for messages
+        const successMsg = "<%= success %>"; 
+        const errorMsg = "<%= error %>";
+
+        if (successMsg && successMsg.length > 0) {
+            triggerFlash(successMsg, "Success!", "border-rose-500", "bg-rose-500");
+        } else if (errorMsg && errorMsg.length > 0) {
+            triggerFlash(errorMsg, "Error!", "border-red-600", "bg-red-600");
+        }
+    });
+
+   function triggerFlash(msg, title, borderColor, progressColor) {
+    const toast = document.getElementById('toast');
+    const progress = document.getElementById('toast-progress');
+    
+    document.querySelector('#toast p.text-gray-900').innerText = title;
+    document.querySelector('#toast p.text-gray-600').innerText = msg;
+    
+    toast.firstElementChild.className = `bg-white border-l-4 ${borderColor} shadow-2xl rounded-md overflow-hidden w-80`;
+    
+    // REMOVE 'transition-all' and 'duration' classes from here
+    progress.className = `h-1 ${progressColor} w-full`; 
+
+    showToast();
+}
+    </script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<% layout("/layouts/boilerplate") %>
+
+<!-- Reduced max-width to 'md' (about 450px) to keep it compact -->
+<div class="max-w-md mx-auto px-4 py-6">
+    
+    <!-- Title: Smaller text and tighter margin -->
+    <div class="mb-4">
+        <h1 class="text-xl font-bold text-gray-900"><%= listing.title %></h1>
+        <p class="text-xs text-gray-500 mt-1 italic">
+        Owned by <%= listing.owner ? listing.owner.name : "Anonymous" %>
+        </p>
+    </div>
+
+    <!-- Main Card with smaller rounded corners -->
+    <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+        
+        <!-- Image: Fixed height so it doesn't take over the screen -->
+        <div class="h-48 w-full overflow-hidden">
+            <img 
+                src="<%= listing.image.url %>" 
+                alt="Property" 
+                class="w-full h-full object-cover"
+            >
+        </div>
+
+        <!-- Content Section: Reduced padding (p-5) -->
+        <div class="p-5">
+            <!-- Location -->
+            <div class="flex items-center gap-1.5 text-gray-600 mb-3 text-sm">
+                <i class="fa-solid fa-location-dot text-rose-500"></i>
+                <span class="font-medium">
+                    <%= listing.location %>, <%= listing.country %>
+                </span>
+            </div>
+
+            <!-- Description: Smaller text -->
+            <div class="border-t border-gray-100 pt-4">
+                <h3 class="text-base font-semibold mb-1">About this place</h3>
+                <p class="text-gray-600 text-sm leading-snug">
+                    <%= listing.description %>
+                </p>
+            </div>
+
+            <!-- Price Highlight: Compact layout -->
+            <div class="mt-5 p-3 bg-gray-50 rounded-lg flex items-center justify-between">
+                <div class="text-lg">
+                    <span class="font-bold text-gray-900">₹<%= listing.price.toLocaleString("en-IN") %></span>
+                    <span class="text-gray-500 text-xs">/ night</span>
+                </div>
+                <div class="text-[10px] uppercase tracking-wider font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-md">
+                    Rare find
+                </div>
+            </div>
+        <% if(currUser && listing.owner && currUser._id.equals(listing.owner._id)) { %>
+            <!-- Buttons: Side-by-side and shorter -->
+            <div class="mt-6 flex gap-2">
+                <a href="/listings/<%= listing._id %>/edit" 
+                   class="flex-1 text-center bg-gray-900 text-white text-sm font-bold py-2 rounded-lg 
+          border border-gray-900
+          hover:bg-white hover:text-gray-900 
+          transition-all duration-300 ease-in-out transform  shadow-sm hover:shadow-md">
+                    Edit
+                </a>
+
+                <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" class="flex-1">
+                    <button class="w-full bg-white border border-rose-500 text-rose-500 text-sm font-bold py-2 rounded-lg 
+               transition-all duration-300 ease-in-out
+               hover:bg-rose-500 hover:text-white 
+               hover:shadow-[0_0_15px_rgba(244,63,94,0.4)] 
+               active:scale-95 transform">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        <% } %>
+        </div>
+    </div>
+    
+    <!-- Simple Back Link -->
+    <div class="mt-4 text-center">
+        <a href="/listings" class="text-xs text-gray-400 hover:text-gray-600 flex items-center justify-center gap-1">
+            <i class="fa-solid fa-arrow-left"></i> Back to all listings
+        </a>
+    </div>
+
+    <!-- review tab -->
+     <!-- review tab -->
+<div class="max-w-2xl mx-auto my-6 px-4">
+    <hr class="border-gray-200 mb-6" />
+    
+    <% if(currUser) { %>
+    <h4 class="text-2xl font-semibold text-gray-800 mb-4">Leave a Review</h4>
+    
+    <form action="/listings/<%= listing._id %>/reviews" method="POST" class="space-y-6" id="reviewForm" novalidate>
+        
+        <div class="validation-container">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+            <fieldset class="starability-slot">
+                <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+                <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                <label for="first-rate1" title="Terrible">1 star</label>
+                <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                <label for="first-rate2" title="Not good">2 stars</label>
+                <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                <label for="first-rate3" title="Average">3 stars</label>
+                <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                <label for="first-rate4" title="Very good">4 stars</label>
+                <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                <label for="first-rate5" title="Amazing">5 stars</label>
+            </fieldset>
+        </div>
+
+        <div class="validation-container group">
+            <label for="comment" class="block text-sm font-medium text-gray-700 mb-2">Comments</label>
+            <textarea 
+                name="review[comment]" 
+                id="comment" 
+                rows="4" 
+                class="peer block w-full rounded-md border-gray-300 border p-3 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-900 transition-all
+                group-[.was-validated]:invalid:border-red-500 group-[.was-validated]:valid:border-green-500" 
+                placeholder="Share your thoughts..."
+                required
+            ></textarea>
+            <p class="hidden group-[.was-validated]:peer-invalid:block text-[11px] text-red-600 mt-1">Please add a comment before submitting.</p>
+        </div>
+
+        <button class="px-6 py-2 border-2 border-gray-900 text-gray-900 font-medium rounded-md hover:bg-gray-900 hover:text-white transition-colors duration-200">
+            Submit
+        </button>
+    </form>
+    <% } %>
+
+    <hr class="border-gray-200 my-8" />
+
+    <p class="text-lg font-bold text-gray-800 mb-6">Guest Reviews</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <% for(review of listing.reviews) { %>
+        <div class="border border-gray-100 rounded-2xl p-5 shadow-sm bg-white flex flex-col hover:shadow-md transition-shadow">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-100 bg-gray-50">
+                    <img src="<%= (review.author && review.author.profilePhoto) ? review.author.profilePhoto.url : '/images/default-profile-photo.jpg' %>" 
+                         class="w-full h-full object-cover" 
+                         alt="author">
+                </div>
+                <div>
+                    <h5 class="text-sm font-bold text-gray-900">@<%= review.author.name %></h5>
+                    <p class="text-[10px] text-gray-400"><%= new Date(review.createdAt).toLocaleDateString('en-IN', {month: 'short', year: 'numeric'}) %></p>
+                </div>
+            </div>
+
+            <div class="mb-2">
+                <p class="starability-result scale-75 origin-left" data-rating="<%= review.rating %>"></p>
+            </div>
+
+            <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
+                "<%= review.comment %>"
+            </p>
+            
+            <% if(currUser && currUser._id.equals(review.author._id)) { %> 
+                <div class="mt-auto pt-3 border-t border-gray-50">
+                    <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+                        <button class="text-xs font-bold text-rose-500 hover:text-rose-700 transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-trash-can"></i> Remove
+                        </button>
+                    </form>
+                </div>
+            <% } %>
+        </div>
+    <% } %>
+</div>
+</div>
+
+<script>
+    // Real-time validation logic
+    const reviewForm = document.getElementById('reviewForm');
+    const reviewInputs = reviewForm.querySelectorAll('textarea, input[type="range"]');
+
+    reviewInputs.forEach(input => {
+        ['blur', 'input'].forEach(eventType => {
+            input.addEventListener(eventType, () => {
+                const container = input.closest('.validation-container');
+                if (input.value.length > 0 || eventType === 'blur') {
+                    container.classList.add('was-validated');
+                }
+            });
+        });
+    });
+
+    reviewForm.addEventListener('submit', event => {
+        if (!reviewForm.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+            reviewForm.querySelectorAll('.validation-container').forEach(c => c.classList.add('was-validated'));
+        }
+    }, false);
+</script>
+</div>

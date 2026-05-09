@@ -1,0 +1,76 @@
+<% layout("/layouts/boilerplate") %>
+
+<!-- 
+  MOBILE OPTIMIZATION: 
+  - Changed p-4 to px-4 py-2 for tighter vertical spacing on mobile.
+  - Using a 1-column layout for very small screens to make images readable.
+-->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-2">
+    
+    <% for(let listing of allListings) { %>
+        <a href="/listings/<%=listing._id%>" class="listing-card group cursor-pointer block">
+            <div class="flex flex-col gap-2 w-full">
+                
+                <!-- 
+                  MOBILE OPTIMIZATION: 
+                  - Reduced aspect-square slightly for better vertical scrolling.
+                  - Added active:opacity-70 for mobile touch feedback.
+                -->
+                <div class="aspect-[4/3] sm:aspect-square w-full overflow-hidden rounded-xl bg-gray-100 border border-gray-100 active:opacity-75 transition-opacity">
+                    <img 
+                        src="<%= listing.image.url %>" 
+                        alt="<%= listing.title %>" 
+                        class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                    >
+                </div>
+
+                <div class="px-1">
+                    <div class="flex justify-between items-start">
+                        <h2 class="listing-title font-bold text-gray-900 truncate text-[15px] sm:text-base w-3/4">
+                            <%= listing.title %>
+                        </h2>
+                    </div>
+                    
+                    <p class="listing-location text-gray-500 font-normal text-xs sm:text-sm">
+                        <%= listing.location %>, <%= listing.country %>
+                    </p>
+                    
+                    <!-- 
+                      MOBILE OPTIMIZATION: 
+                      - Increased text size for price to ensure readability on small screens.
+                    -->
+                    <p class="mt-0.5 text-[14px]">
+                        <span class="font-bold">₹<%= listing.price.toLocaleString("en-IN") %></span> 
+                        <span class="text-gray-600 text-xs">night</span>
+                    </p>
+                </div>
+            </div>
+        </a>
+    <% } %>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        const listingCards = document.querySelectorAll('.listing-card');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+
+                listingCards.forEach(card => {
+                    const titleText = card.querySelector('.listing-title')?.innerText.toLowerCase() || "";
+                    const locationText = card.querySelector('.listing-location')?.innerText.toLowerCase() || "";
+
+                    if (titleText.includes(query) || locationText.includes(query)) {
+                        card.style.display = "block";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            });
+        }
+    });
+</script>
