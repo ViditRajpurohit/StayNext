@@ -554,7 +554,7 @@ app.delete("/listings/:id", async (req, res) => {
 
 // Home route
 app.get("/", (req, res) => {
-    res.send("Hello ji");
+    res.redirect("/signup");
 });
 
 
